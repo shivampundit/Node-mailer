@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <title>Node.JS Email application</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- CSS link (loading Semantic UI from a CDN) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+      integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script>
+      $(document).ready(function () {
+        var from, to, subject, text;
+        function isEmail(email) {
+          var regex =
+            /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+          return regex.test(email);
+        }
+        $("#send_email").click(function () {
+          to = $("#to").val();
+          if (!isEmail(to)) {
+            $("#message").empty().html("Invalid email");
+          } else {
+            subject = $("#subject").val();
+            text = $("#content").val();
+            $("#message").text("Sending e-mail...Please wait");
+            $.post(
+              "http://localhost:8080/send",
+              { to: to, subject: subject, text: text },
+              function (data) {
+                if (data == "sent") {
+                  $("#message")
+                    .empty()
+                    .html(
+                      "Email has been sent at " + to + " . Please check inbox!"
+                    );
+                }
+              }
+            );
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="ui segment">
+      <h1>Node.JS Email application</h1>
+      <div class="ui segment form">
+        <div class="field">
+          <label>To</label>
+          <input
+            id="to"
+            type="text"
+            placeholder="Enter E-mail ID where you want to send"
+          />
+        </div>
+        <div class="field">
+          <label>Subject</label>
+          <input id="subject" type="text" placeholder="Write Subject" />
+        </div>
+        <div class="field">
+          <label>Text</label>
+          <textarea
+            id="content"
+            placeholder="Write what you want to send"
+          ></textarea>
+        </div>
+        <button class="ui button" type="submit" id="send_email">
+          Send Email
+        </button>
+        <span id="message"></span>
+      </div>
+    </div>
+  </body>
+</html>
